@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قياس الضغط</title>
+<link rel="stylesheet" href="pressure.css">
+</head>
+<body>
+
+<!-- الأصوات -->
+<audio id="bgMusic" src="./kids.mp3" style="display:none" loop></audio>
+<audio id="laughSound" src="./kids22.mp3" style="display:none"></audio>
+
+
+<a href="index.html" class="btn">العودة للصفحة الرئيسية</a>
+
+<div class="device-container">
+  <div class="image-layer"></div>
+  <div class="image-layer"></div>
+</div>
+
+<div class="navigation" id="navButtons">
+  <button id="prevBtn" class="btn">السابق</button>
+  <button id="nextBtn" class="btn">التالي</button>
+</div>
+
+<button id="startBtn" class="btn">هيا نبدأ</button>
+
+<script>
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nav = document.getElementById("navButtons");
+const layers = document.querySelectorAll(".image-layer");
+
+const bgMusic = document.getElementById("bgMusic");
+const laughSound = document.getElementById("laughSound");
+// 🔊 تعديل مستوى الصوت
+laughSound.volume = 1.0; // أعلى صوت للضحكة
+bgMusic.volume = 0.7;    // الموسيقى الخلفية شوي أهدى (اختياري)
+
+const images = [
+  'https://www.raed.net/img?id=1452084',
+  'https://www.raed.net/img?id=1452088',
+  'https://www.raed.net/img?id=1452089',
+  'https://www.raed.net/img?id=1452090',
+  'https://www.raed.net/img?id=1452091',
+  //'https://www.raed.net/img?id=1452096',
+  'https://www.raed.net/img?id=1452098',
+  'https://www.raed.net/img?id=1452099',
+  'https://www.raed.net/img?id=1452101',
+  'https://www.raed.net/img?id=1452102',
+ // 'https://www.raed.net/img?id=1452103',
+  'https://www.raed.net/img?id=1452105',
+  'https://www.raed.net/img?id=1452106'
+];
+
+let index = 0;
+let current = 0;
+
+function showImage(i) {
+  const next = (current + 1) % 2;
+  layers[next].style.backgroundImage = `url('${images[i]}')`;
+  layers[current].classList.remove("active");
+  layers[next].classList.add("active");
+  current = next;
+
+  nextBtn.style.display = i === images.length - 1 ? "none" : "inline-block";
+  prevBtn.style.display = i === 0 ? "none" : "inline-block";
+
+  if (i === images.length - 1) {
+    // عند آخر صورة: أوقف الموسيقى وشغل الضحك
+    bgMusic.pause();
+    laughSound.currentTime = 0;
+    laughSound.play().catch(err => console.log(err));
+  } else {
+    // عند أي صورة ثانية: تأكد الموسيقى شغالة
+    bgMusic.play().catch(err => console.log(err));
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  layers[0].style.backgroundImage = `url('${images[0]}')`;
+  layers[0].classList.add("active");
+  prevBtn.style.display = "none";
+});
+
+startBtn.addEventListener("click", () => {
+  startBtn.style.display = "none";
+  nav.classList.add("show");
+
+  // نضمن الصوت من البداية ويشتغل دايمًا
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(err => console.log(err));
+
+  showImage(index);
+});
+
+nextBtn.addEventListener("click", () => {
+  index = Math.min(index + 1, images.length - 1);
+  showImage(index);
+});
+
+prevBtn.addEventListener("click", () => {
+  index = Math.max(index - 1, 0);
+  showImage(index);
+});
+</script>
+
+</body>
+</html>

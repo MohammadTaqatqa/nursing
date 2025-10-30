@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تركيب الكانيولا</title>
+<link rel="stylesheet" href="cannula.css">
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  direction: rtl;
+  text-align: center;
+  background: #63c3ec;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #2b8de3;
+  color: white;
+  padding: 12px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.btn:hover {
+  background-color: #1e6fbf;
+}
+
+.device-container {
+  position: relative;
+  width: 400px;
+  height: 500px;
+  margin-top: 40px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.image-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out; 
+}
+
+.image-layer.active {
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<!-- الأصوات -->
+<audio id="bgMusic" src="./kids.mp3" style="display:none" loop></audio>
+<audio id="laughSound" src="./kids2.mp3" style="display:none"></audio>
+
+<a href="index.html" class="btn">العودة للصفحة الرئيسية</a>
+
+<div class="device-container">
+  <div class="image-layer"></div>
+  <div class="image-layer"></div>
+</div>
+
+<div class="navigation" id="navButtons">
+  <button id="prevBtn" class="btn">السابق</button>
+  <button id="nextBtn" class="btn">التالي</button>
+</div>
+
+<button id="startBtn" class="btn">هيا نبدأ</button>
+
+<script>
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nav = document.getElementById("navButtons");
+const layers = document.querySelectorAll(".image-layer");
+
+const bgMusic = document.getElementById("bgMusic");
+const laughSound = document.getElementById("laughSound");
+
+const images = [
+  'https://www.raed.net/img?id=1456113',
+  'https://www.raed.net/img?id=1456114',
+  'https://www.raed.net/img?id=1456115',
+  'https://www.raed.net/img?id=1456117',
+  'https://www.raed.net/img?id=1456118',
+  'https://www.raed.net/img?id=1456119',
+  'https://www.raed.net/img?id=1456121',
+  'https://www.raed.net/img?id=1456122',
+  'https://www.raed.net/img?id=1456123',
+  'https://www.raed.net/img?id=1456125',
+  'https://www.raed.net/img?id=1456126',
+  'https://www.raed.net/img?id=1456127',
+  'https://www.raed.net/img?id=1456128',
+  'https://www.raed.net/img?id=1456129',
+  'https://www.raed.net/img?id=1456130'
+];
+
+let index = 0;
+let current = 0;
+
+function showImage(i) {
+  const next = (current + 1) % 2;
+  layers[next].style.backgroundImage = `url('${images[i]}')`;
+  layers[current].classList.remove("active");
+  layers[next].classList.add("active");
+  current = next;
+
+  nextBtn.style.display = i === images.length - 1 ? "none" : "inline-block";
+  prevBtn.style.display = i === 0 ? "none" : "inline-block";
+
+  // عند آخر صورة: وقف bgMusic وشغل laughSound
+  if (i === images.length - 1) {
+    bgMusic.pause();
+    laughSound.play().catch(err => console.log("Error playing laughSound:", err));
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  layers[0].style.backgroundImage = `url('${images[0]}')`;
+  layers[0].classList.add("active");
+  prevBtn.style.display = "none";
+});
+
+startBtn.addEventListener("click", () => {
+  startBtn.style.display = "none";
+  nav.classList.add("show");
+
+  // تشغيل الصوت الأول مع التكرار
+  bgMusic.play().then(() => {
+    console.log("الصوت الأول شغال ويكرر");
+  }).catch(err => console.log("Error playing bgMusic:", err));
+
+  showImage(index);
+});
+
+nextBtn.addEventListener("click", () => {
+  index = Math.min(index + 1, images.length - 1);
+  showImage(index);
+});
+
+prevBtn.addEventListener("click", () => {
+  index = Math.max(index - 1, 0);
+  showImage(index);
+});
+</script>
+
+</body>
+</html>
